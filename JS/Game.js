@@ -79,16 +79,16 @@ class Game{
 
     
       
-      car1 = createSprite(100,200)
+      car1 = createSprite(100,displayHeight)
       car1.addImage(c1)
 
-      car2 = createSprite(300,200)
+      car2 = createSprite(300,displayHeight)
       car2.addImage(c2)
 
-      car3 = createSprite(500,200)
+      car3 = createSprite(500,displayHeight)
       car3.addImage(c3)
 
-      car4 = createSprite(700,200)
+      car4 = createSprite(700,displayHeight)
       car4.addImage(c4)
 
      
