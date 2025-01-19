@@ -2,6 +2,7 @@ class Form {
   constructor(lobbyID) {
     this.input = createInput("Enter your name");
     this.button = createButton("Play");
+    this.startEarlyButton = createButton("Start Game Early");
     this.greeting = createElement("h2");
     this.reset = createButton("Reset");
     this.rules = createElement("h4");
@@ -11,22 +12,41 @@ class Form {
     // Add custom classes for styling
     this.input.class("form-input");
     this.button.class("form-button play-button");
+    this.startEarlyButton.class("form-button early-start-button"); // Add custom class
     this.reset.class("form-button reset-button");
     this.greeting.class("form-greeting");
     this.rules.class("form-rules");
     this.totalGamesText.class("form-total-games");
+
+    // Clear placeholder text on focus
+    this.input.elt.addEventListener("focus", () => {
+      if (this.input.value() === "Enter your name") {
+        this.input.value(""); // Clear the placeholder text
+      }
+    });
+
+    // Restore placeholder text on blur (optional)
+    this.input.elt.addEventListener("blur", () => {
+      if (this.input.value().trim() === "") {
+        this.input.value("Enter your name"); // Restore placeholder text if empty
+      }
+    });
+
+    // Initially hide the Start Early button
+    this.startEarlyButton.hide();
   }
 
   hide() {
     this.input.hide();
     this.button.hide();
+    this.startEarlyButton.hide();
     this.greeting.hide();
     this.rules.hide();
     this.totalGamesText.hide();
   }
 
   async view() {
-    // Title Position
+    // Position elements
     this.input.position(windowWidth / 2.8, windowHeight / 3);
     this.button.position(windowWidth / 2.2, windowHeight / 2);
 
@@ -66,6 +86,19 @@ class Form {
         </ul>`
       );
       this.rules.position(windowWidth / 2.5, windowHeight / 2);
+
+      // Show Start Early button after displaying rules
+      this.startEarlyButton.position(windowWidth / 2.2, windowHeight / 3.5); // Below the rules
+      this.startEarlyButton.show();
+
+      // Start Early Button Action
+      this.startEarlyButton.mousePressed(() => {
+        alert("Game is starting early!");
+        game.updateGameState(1); // Assume game state 1 starts the game
+        this.startEarlyButton.hide();
+        this.rules.hide();
+        this.greeting.hide();
+      });
     });
 
     this.reset.mousePressed(() => {
@@ -80,7 +113,7 @@ class Form {
 
   async updateTotalGamesDisplay() {
     // Get the total number of games played from the database
-    const totalGamesRef = database.ref('games/totalGames');
+    const totalGamesRef = database.ref("games/totalGames");
     totalGamesRef.once("value", (snapshot) => {
       const totalGames = snapshot.val() || 0;
       this.totalGamesText.html(`Total Games Played: ${totalGames}`);
@@ -89,7 +122,7 @@ class Form {
 
   static incrementTotalGames() {
     // Increment the total number of games played in the database
-    const totalGamesRef = database.ref('games/totalGames');
+    const totalGamesRef = database.ref("games/totalGames");
     totalGamesRef.transaction((currentValue) => {
       return (currentValue || 0) + 1;
     });
